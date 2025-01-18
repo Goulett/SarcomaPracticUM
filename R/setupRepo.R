@@ -1,7 +1,7 @@
-# Title: Package setup
+# Title: Setup Github Repository
 # Author: Natalie Goulett
 # Date created: 2025-01-17
-# references: How to Use Git/Github with R
+# references: How to Use Git/Github with R by David Keyes
 #   https://rfortherestofus.com/2021/02/how-to-use-git-github-with-r
 
 
@@ -14,8 +14,12 @@
 
 # Required packages -----
 library(usethis)
+install.packages("gitcreds")
+library(gitcreds)
 
 
+
+# Setup ----
 # I edited the description file authors, license
 
 # Create a readme.md to explain my Repository authorship, purpose, license, etc.
@@ -40,6 +44,11 @@ use_git()
 usethis::edit_git_config(user.name = "Goulett", user.email = "no@nope.edu")
 # or, to edit file directly:
 usethis::edit_git_config()
+
+# create PAT
+create_github_token()
+gitcreds::gitcreds_set()
+# I store my PAT here
 
 # create repository on my Github
 use_github()
