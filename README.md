@@ -4,22 +4,14 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of SarcomaPracticUM is to ...
+This repository contains my code for assisting development of various packages and data analyses related to my practicum project. 
 
 ## Installation
 
-You can install the development version of SarcomaPracticUM like so:
+You cannot install my package... or can you?
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+# don't
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(SarcomaPracticUM)
-## basic example code
-```
 

@@ -1,10 +1,22 @@
 # Title: Package setup
+# Author: Natalie Goulett
 # Date created: 2025-01-17
+# references: How to Use Git/Github with R
+#   https://rfortherestofus.com/2021/02/how-to-use-git-github-with-r
 
-# required packages
+
+# Objective -----
+# I'll use Github for version control and collaboration on my practicum project.
+#   This script explains my process for creating a Github repository using an
+#   existing RStudio project.
+
+
+
+# Required packages -----
 library(usethis)
 
-# edit description file for authors, license
+
+# I edited the description file authors, license
 
 # Create a readme.md to explain my Repository authorship, purpose, license, etc.
 use_readme_md()
@@ -15,10 +27,20 @@ use_news_md()
 # Set up tests/testthat folder to perform unit testing
 use_testthat()
 
-# create Git Repository
+# Create Git Repository
 use_git()
 
 # edit .gitignore file to specify which files to not upload to repository.
 #   I hid my folder "SarcomaPracticUM/scrap" by adding the line "scrap/" to my
 #   .gitignore file. This is where I'll save old versions of code and other work
 #   that shouldn't be kept on my repository.
+
+# Configure Git
+#   here I enter my credentials for Github
+usethis::edit_git_config(user.name = "Goulett", user.email = "no@nope.edu")
+# or, to edit file directly:
+usethis::edit_git_config()
+
+# create repository on my Github
+use_github()
+
