@@ -166,11 +166,13 @@ make_survival_curve <- function(DF, start_date_col, end_date_col, status_col, st
   return(plot)
 }
 
+# load lung data
 DF <- lung
 DF %>% names()
 time_col <- "time"
 status_col <- "status"
 strat_col <- "sex"
+
 # My survival curve function
 # *** fix axis labels
 make_survival_curve <- function(DF, time_col, status_col, strat_col,pval = T,risk.table = T){
