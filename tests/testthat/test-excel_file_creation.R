@@ -1,8 +1,8 @@
 library(openxlsx) # For reading report
 library(writexl) # For writing report
 # Test for list_to_excel() from RosyUtils
-# Note: excel_to_list() and read.xlsx() treat all variables as character.
-# in excel_to_list(), we could set rio::import() col_types = NULL? I will
+# Note: list_to_excel() and read.xlsx() treat all variables as character.
+# in list_to_excel(), we could set rio::import() col_types = NULL? I will
 #   convert all df1 and df2 columns to character before comparing.
 
 test_that("list_to_excel() creates Excel file", {
