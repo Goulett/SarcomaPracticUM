@@ -1,0 +1,115 @@
+---
+title: "Example Flexdashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(plotly)
+library(tidyverse)
+library(RosyUtils)
+library(RosyApp)
+library(DT)
+library(survival)
+library(survminer)
+
+```
+
+Column {data-width=700}
+-----------------------------------------------------------------------
+### NCCTG Lung Cancer Data Dashboard
+
+This is an example dashboard visualizing the NCCTG Lung Cancer data from the `survival` package. The NCCTG Lung Cancer Dataset provides insight into survival in patients with advanced lung cancer from the North Central Cancer Treatment Group. Performance scores rate how well the patient can perform usual daily activities.
+
+#### References
+Loprinzi CL. Laurie JA. Wieand HS. Krook JE. Novotny PJ. Kugler JW. Bartel J. Law M. Bateman M. Klatt NE. et al. Prospective evaluation of prognostic variables from patient-completed questionnaires. North Central Cancer Treatment Group. Journal of Clinical Oncology. 12(3):601-7, 1994.
+
+### Kaplan-Meier Curve
+
+```{r}
+#| label: survival
+# Make survival curve using lung data as placeholder
+
+# Survival curve function copied from the_whole_game:
+make_survival_curve <- function(DF, time_col, status_col, strat_col,pval = T,risk.table = T){
+
+  if(!is.data.frame(DF))stop("DF has to be a data.frame")
+  # remove incomplete cases
+  vars <-  c(time_col, status_col)
+  if(!missing(strat_col))vars <-  append(vars, strat_col)
+  DF <- DF[complete.cases(DF[,vars]), ]
+  DF[["time_col"]] <- DF[[time_col]]
+  DF[["status_col"]] <- DF[[status_col]]
+  # fit with stratification if strat_col provided
+  if(!missing(strat_col)){
+    DF[["strat_col"]] <- DF[[strat_col]]
+    fit <- survival::survfit(survival::Surv(time_col,status_col) ~ strat_col, data = DF)
+  }else{
+    # fit without stratification if no strat_col provided
+    fit <- survival::survfit(survival::Surv(time_col,status_col) ~ 1, data = DF)
+  }
+  # handle missing fits
+  if(is.null(fit))return(NULL)
+  legend.labs <- NULL
+  # create legend labels
+  if(!missing(strat_col)){
+    if(is.factor(DF[[strat_col]])){
+      legend.labs <- levels(DF[[strat_col]])
+    }else{
+      legend.labs <- unique(DF[[strat_col]])
+    }
+  }
+
+  plot <-  survminer::ggsurvplot(
+    fit = fit,
+    data = DF,
+    size = 1,                 # change line size
+    #palette =
+    #  c("#E7B800", "#2E9FDF"),# custom color palettes
+    conf.int = TRUE,          # Add confidence interval
+    pval = pval,           # Add p-value
+    risk.table = risk.table,
+    surv.scale = "percent",# Add risk table
+    # risk.table.col = strat_col, # color groups in risk table by strat
+    #   causes error; it treats strat_col (in this case, lung$sex) as a color
+    xlab = "Time (days)", # edit x-axis to reflect time in days
+    legend.labs = legend.labs,    # Change legend labels
+    risk.table.height = 0.25, # Useful to change when you have multiple groups
+    ggtheme = theme_bw()      # Change ggplot2 theme
+  )
+  return(plot)
+}
+# make_survival_curve(DF,"time","status")
+
+
+# Plot lung survival
+lungSurv <- make_survival_curve(
+  DF = lung,
+  time_col = "time",
+  status_col = "status",
+  strat_col = "sex"
+)
+
+lungSurv
+
+```
+
+Column {data-width=300}
+-----------------------------------------------------------------------
+
+### Demographics
+
+```{r}
+#| label: demographics
+# table of demographic data using lung data as placeholder
+lung %>% mutate(
+  status = as.factor(status),
+  sex = as.factor(sex)
+  ) %>%
+  dplyr::select(status, sex, age) %>% RosyApp::make_table1()
+
+```
+
