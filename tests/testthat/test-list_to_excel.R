@@ -56,3 +56,41 @@ test_that("list_to_excel() creates Excel file", {
 
 
 # next: Test for list with multiple lists
+
+test_that("list_to_excel creates multiple Excel files", {
+
+  # Create temporary directory and file names
+  temp_dir <- tempdir()
+  temp_files <- file.path(
+    temp_dir,
+    c("testReports_Sheet1.xlsx", "testReports_Sheet2.xlsx")
+  )
+
+  # Export as Excel files with separate = TRUE
+  list_to_excel(
+    test_list,
+    dir = temp_dir,
+    file_name = "testReports",
+    separate = TRUE
+  )
+
+  # Check if Excel files exist
+  expect_true(all(file.exists(temp_files)))
+
+  # Verify that files can be read
+  wb_read_1 <- read.xlsx(temp_files[1])
+  wb_read_2 <- read.xlsx(temp_files[2])
+
+  # Convert original list to character class only
+  test_list_char <- lapply(test_list, function(df) {
+    as.data.frame(lapply(df, as.character))
+  })
+
+  # Compare character versions
+  expect_equal(wb_read_1, test_list_char[[1]])
+  expect_equal(wb_read_2, test_list_char[[2]])
+
+})
+
+
+

@@ -13,6 +13,7 @@ library("survminer")
 library("lubridate")
 library("tidyverse")
 library("REDCapSync")
+library("testthat")
 
 plotly_hbar <- function(DF, x_col, y_col, name) {
   # Check if x_col and y_col are in DF

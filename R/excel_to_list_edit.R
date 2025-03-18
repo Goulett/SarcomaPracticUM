@@ -40,3 +40,5 @@ df2_read <- openxlsx::read.xlsx(temp_file, sheet = "Sheet2")
 
 expect_equal(df1_read, df1)
 expect_equal(df2_read, df2)
+# Fails; df1_read and df2_read became character class. Excel columns are
+#   in general format.
