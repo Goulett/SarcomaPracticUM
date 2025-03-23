@@ -1,22 +1,28 @@
 # Test for list_to_excel() from RosyUtils
 
-# Note: list_to_excel() and read.xlsx() treat all variables as character.
-# in list_to_excel(), we could set rio::import() col_types = NULL? I will
-#   convert all df1 and df2 columns to character before comparing.
+# Note: list_to_excel() treats all variables as character. All columns are
+#  converted to character class before comparing actual vs. expected. .rdata
+#  files are typically used to store character class data.
 
-# Required packages
-library(openxlsx) # For reading report
-library(writexl) # For writing report
 
 test_that("list_to_excel() creates Excel file", {
+
+  # Required packages
+  library(openxlsx) # For reading reports
 
   # Create a temporary directory and file name
   temp_dir <- tempdir()
   temp_file <- file.path(temp_dir, "testReport.xlsx")
 
   # Create sample list of data frames
-  df1 <- data.frame(A = 1:3, B = c("x", "y", "z"))
-  df2 <- data.frame(X = c("a", "b", "c"), Y = 4:6)
+  df1 <- data.frame(
+    age = c(34, 7, 101),
+    full_name = c("Anita Break", "Gene Poole", "Gus Undheit")
+  )
+  df2 <- data.frame(
+    diagnosis = c("Chronic Fatigue", "Huntington's Disease", "Rhinitis"),
+    first_visit_year = c(2005, 2018, 1967)
+  )
   test_list <- list(Sheet1 = df1, Sheet2 = df2)
 
   # Export as Excel file
@@ -37,27 +43,27 @@ test_that("list_to_excel() creates Excel file", {
   df1_read <- openxlsx::read.xlsx(temp_file, sheet = "Sheet1")
   df2_read <- openxlsx::read.xlsx(temp_file, sheet = "Sheet2")
 
-  # Convert df1 and df2 to character type because the excel columns are read
+  # Convert df1 and df2 to character type because the Excel columns are read
   #   as character type
   df1_char <- df1
-  df1_char$A <- as.character(df1_char$A)
+  df1_char$age <- as.character(df1_char$age)
 
   df2_char <- df2
-  df2_char$Y <- as.character(df2_char$Y)
+  df2_char$first_visit_year <- as.character(df2_char$first_visit_year)
 
-  # Compare the read data to the versions with character vectors
+  # Compare the read data to expected data.frames with character vectors
   expect_equal(df1_read, df1_char)
   expect_equal(df2_read, df2_char)
-  # vector class data are lost; all excel cols are imported as character vectors
 
   unlink(temp_file)
 })
 
 
+# Test creating separate Excel files
+test_that("list_to_excel() creates multiple Excel files", {
 
-# next: Test for list with multiple lists
-
-test_that("list_to_excel creates multiple Excel files", {
+  # Required packages
+  library(openxlsx) # For reading reports
 
   # Create temporary directory and file names
   temp_dir <- tempdir()
@@ -78,15 +84,15 @@ test_that("list_to_excel creates multiple Excel files", {
   expect_true(all(file.exists(temp_files)))
 
   # Verify that files can be read
-  wb_read_1 <- read.xlsx(temp_files[1])
-  wb_read_2 <- read.xlsx(temp_files[2])
+  wb_read_1 <- openxlsx::read.xlsx(temp_files[1])
+  wb_read_2 <- openxlsx::read.xlsx(temp_files[2])
 
-  # Convert original list to character class only
+  # Convert original list's data.frame to character class only
   test_list_char <- lapply(test_list, function(df) {
     as.data.frame(lapply(df, as.character))
   })
 
-  # Compare character versions
+  # Compare original data frames with imported data frames
   expect_equal(wb_read_1, test_list_char[[1]])
   expect_equal(wb_read_2, test_list_char[[2]])
 
